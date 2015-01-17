@@ -11,7 +11,10 @@ Create goole app script project on google drive.
 ![create.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/create.png)
 
 Copy script and save it.
-Edit config file.
+
+![save-script.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/save-script.png)
+
+Edit config.
 
 ```
 
@@ -41,8 +44,6 @@ var config = {
 };
 
 ```
-
-![save-script.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/save-script.png)
 
 Select current project's triggers on menu.
 
