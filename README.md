@@ -45,6 +45,10 @@ var config = {
 
 ```
 
+Select run on menu and send test email.
+
+![send-test.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/send-test.png)
+
 Select current project's triggers on menu.
 
 ![select-trigger.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/select-trigger.png)
