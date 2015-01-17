@@ -2,6 +2,8 @@
 
 Send email of github trending by google app script
 
+![result.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/result.png)
+
 ## Examples
 
 Create goole app script project on google drive.
