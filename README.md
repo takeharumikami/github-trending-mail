@@ -49,6 +49,14 @@ Select run on menu and send test email.
 
 ![send-test.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/send-test.png)
 
+Select continue.
+
+![authorize.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/authorize.png)
+
+Select accept.
+
+![authorize2.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/authorize2.png)
+
 Select current project's triggers on menu.
 
 ![select-trigger.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/select-trigger.png)
