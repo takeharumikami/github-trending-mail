@@ -1,28 +1,34 @@
-function sendEmail() {
-  service.sendEmail();
-}
-
 var config = {
   url: 'https://github.com/trending',
   contents: ['name', 'star', 'description'],
 
-  email: 'your email address',
+  //email: 'your email address',
 
-  // time span
-  time: {
-    daily: 1,
-    weekly: 1,
-    monthly: 1
-  },
+  title: 'Github Trending',
 
-  // language
-  language: {
-    javascript: 1,
-    go: 1,
-    cpp: 1,
-    python: 1
+  // Select languages
+  languages: {
+    defaults: [
+      'daily',
+      'weekly',
+      // 'monthly',
+    ],
+    // javascript: [
+    //   'daily'
+    // ],
+    // go: [
+    //   'daily'
+    // ],
+    // python: [
+    //   'daily'
+    // ]
   }
 };
+
+
+function sendEmail() {
+  service.sendEmail();
+}
 
 var service = {
 
@@ -74,7 +80,8 @@ var service = {
     return trendingValues;
   },
 
-  _convert: function(trendingValues) {
+  // Convert HTML
+  _convertHtml: function(trendingValues) {
     var converter = {
       name: function(_name) {
         return '\<h3\>\<a href\=\"https\:\/\/github.com\/' + _name + '\"\>' + _name +  '\<\/a\>\<\/h3\>';
@@ -90,10 +97,12 @@ var service = {
 
     };
 
-    for (var key in trendingValues) {
-      var values = trendingValues[key];
-      for (var i = 0; i < values.length; i++) {
-        values[i] = converter[key](values[i]);
+    var contents = config.contents || [];
+    for (var i = 0; i < contents.length; i++) {
+      var content = contents[i];
+      var values = trendingValues[content];
+      for (var j = 0; j < values.length; j++) {
+        values[j] = converter[content](values[j]);
       }
     }
 
@@ -102,25 +111,53 @@ var service = {
 
 
   sendEmail: function() {
-    var trendingValues = this._getTrendingValues(config.url);
-    trendingValues = this._convert(trendingValues);
+    var contents = config.contents || [];
+    var languages = config.languages;
 
-    var text = '';
-    for (var i = 0;; i++) {
-      if (!trendingValues.name[i]) {
-        break;
-      }
-
-      text += trendingValues.name[i] + '\n';
-      text += trendingValues.star[i] + '\n';
-      text += trendingValues.description[i] + '\n\<b\>\n';
+    var trendingValues = {};
+    for (var i = 0; i < contents.length; i++) {
+      trendingValues[contents[i]] = [];
     }
 
-    Logger.log(text);
+    for (var language in languages) {
+      var timespan = languages[language];
+      for (var i = 0; i < timespan.length; i++) {
+        var url = config.url + '?l=' + language + '&since=' + timespan[i];
+        if (language === 'defaults') {
+          url = config.url + '?since=' + timespan[i];
+        }
+
+        var values = this._getTrendingValues(url);
+
+        for (var j = 0; j < contents.length; j++) {
+          var content = contents[j];
+          trendingValues[content] = trendingValues[content].concat(values[content]);
+        }
+      }
+    }
+
+    Logger.log(trendingValues);
+
+    trendingValues = this._convertHtml(trendingValues);
+
+    var text = '';
+    L: for (var i = 0;; i++) {
+      for (var j = 0; j < contents.length; j++) {
+        var content = contents[j];
+        if (!trendingValues[content] || !trendingValues[content][i]) {
+          break L;
+        }
+
+        text += trendingValues[content][i] + '\n';
+      }
+      text += '\<b\>\n';
+    }
+
+    var title = utils.getTime + ' ' +  config.tilte;
     if (config.email) {
-      GmailApp.sendEmail(config.email, utils.getTime(), '', {
-        htmlBody: text
-      });
+      // GmailApp.sendEmail(config.email, title, '', {
+      //   htmlBody: text
+      // });
     }
 
     return this;
