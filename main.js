@@ -1,28 +1,28 @@
 var config = {
-  url: 'https://github.com/trending',
-  contents: ['name', 'star', 'description'],
 
   //email: 'your email address',
-
-  title: 'Github Trending',
 
   // Select languages
   languages: {
     defaults: [
       'daily',
       'weekly',
-      // 'monthly',
+      'monthly',
     ],
-    // javascript: [
-    //   'daily'
-    // ],
-    // go: [
-    //   'daily'
-    // ],
-    // python: [
-    //   'daily'
-    // ]
-  }
+    javascript: [
+      'daily'
+    ],
+    go: [
+      'daily'
+    ],
+    python: [
+      'daily'
+    ]
+  },
+
+  url: 'https://github.com/trending',
+  title: 'Github Trending',
+  contents: ['name', 'language', 'star', 'description']
 };
 
 
@@ -41,7 +41,8 @@ var service = {
     var condition = {
       name: /repo-list-name\"\>\n.*\"\>/g,
       description: /\"repo\-list\-description\"\>\n.*\n/g,
-      star: /.*stars/g
+      star: /.*stars/g,
+      language: /\"repo-list-meta\"\>\n.*\n/g,
     };
 
     var formmater = {
@@ -63,6 +64,12 @@ var service = {
           .replace(/\s/g, '')
           .replace(/\,/g, '')
           .replace(/[a-z]/g, '');
+      },
+
+      language: function(_language) {
+        return _language
+          .split('\n')[1]
+          .replace(/\s/g, '');
       }
     };
 
@@ -92,7 +99,14 @@ var service = {
       },
 
       star: function(_star) {
-        return '\<p\>' +  _star + ' stars\<\/p\>';
+        return _star + ' stars\<\/p\>';
+      },
+
+      language: function(_language) {
+        if (!_language) {
+          return '\<p\>';
+        }
+        return '\<p\>' +  _language + ': ';
       }
 
     };
@@ -136,14 +150,17 @@ var service = {
       }
     }
 
-    Logger.log(trendingValues);
-
     trendingValues = this._convertHtml(trendingValues);
 
     var text = '';
     L: for (var i = 0;; i++) {
       for (var j = 0; j < contents.length; j++) {
         var content = contents[j];
+        if (content === 'language') {
+          text += trendingValues[content][i] + '\n';
+          continue;
+        }
+
         if (!trendingValues[content] || !trendingValues[content][i]) {
           break L;
         }
@@ -153,11 +170,11 @@ var service = {
       text += '\<b\>\n';
     }
 
-    var title = utils.getTime + ' ' +  config.tilte;
+    var title = utils.getTime() + ' ' +  config.title;
     if (config.email) {
-      // GmailApp.sendEmail(config.email, title, '', {
-      //   htmlBody: text
-      // });
+      GmailApp.sendEmail(config.email, title, '', {
+        htmlBody: text
+      });
     }
 
     return this;
