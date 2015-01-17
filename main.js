@@ -4,7 +4,7 @@ var config = {
 
   // Select languages
   languages: {
-    defaults: [
+    All: [
       'daily',
       'weekly',
       'monthly',
@@ -22,7 +22,8 @@ var config = {
 
   url: 'https://github.com/trending',
   title: 'Github Trending',
-  contents: ['name', 'language', 'star', 'description']
+  contents: ['name', 'language', 'star', 'description'],
+  repoListCount: 25
 };
 
 
@@ -152,8 +153,20 @@ var service = {
 
     trendingValues = this._convertHtml(trendingValues);
 
+    var paragraphTitles = [];
+    for (var language in languages) {
+      var timespan = languages[language];
+      for (var i = 0; i < timespan.length; i++) {
+        paragraphTitles.push('\<h1\>' + language + ': ' + timespan[i] + '\<\/h1\>');
+      }
+    }
+
     var text = '';
     L: for (var i = 0;; i++) {
+      if (i % config.repoListCount === 0) {
+        text += paragraphTitles[i / config.repoListCount];
+      }
+
       for (var j = 0; j < contents.length; j++) {
         var content = contents[j];
         if (content === 'language') {
@@ -167,10 +180,9 @@ var service = {
 
         text += trendingValues[content][i] + '\n';
       }
-      text += '\<b\>\n';
     }
 
-    var title = utils.getTime() + ' ' +  config.title;
+    var title = config.title + ' ' + utils.getTime();
     if (config.email) {
       GmailApp.sendEmail(config.email, title, '', {
         htmlBody: text
