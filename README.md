@@ -11,6 +11,36 @@ Create goole app script project on google drive.
 ![create.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/create.png)
 
 Copy script and save it.
+Edit config file.
+
+```
+
+var config = {
+
+  email: 'your email address',
+
+  // Select languages
+  languages: {
+    All: [
+      'daily',
+      'weekly',
+      'monthly'
+    ],
+    javascript: [
+      'daily',
+      'weekly'
+    ],
+    go: [
+      'daily'
+    ],
+    python: [
+      'daily'
+    ]
+  }
+
+};
+
+```
 
 ![save-script.png](https://github.com/takeharumikami/github-trending-mail/blob/master/img/save-script.png)
 
